@@ -5,7 +5,7 @@ videoConvert
 param (
     
     # folder where the videos are or start folder to do a recursive convert
-    [string] $videoFolderToConvert = 'D:\GITREP\Murch\videoConvert\videos para converter\222',
+    [string] $videoFolderToConvert = 'D:\GITREP\Murch\videoConvert\videos para converter',
     
     # types of videos to convert
     [string[]] $convertFileTypes = @(
@@ -43,6 +43,11 @@ $files_toConvert = $files | Where-Object {
     $convertFileTypes -contains $file_ext
 }
 
+Clear-Host
+
+Write-Host ""
+Write-Host "Starting conversion"
+Write-Host ""
 
 $files_toConvert | ForEach-Object {
 
@@ -54,9 +59,12 @@ $files_toConvert | ForEach-Object {
     # H.264
     $output264 = Join-Path $folder "$baseName`__converted_h264.mp4"
     if (-not (Test-Path $output264)) {
-        ffmpeg -i "$input" -c:v libx264 -crf 24 -preset slow -c:a aac -b:a 192k "$output264"
+
+        Write-Host "Converting: $output264 "
+
+        ffmpeg -i "$input" -loglevel error -hide_banner -c:v libx264 -crf 24 -preset slow -c:a aac -b:a 192k "$output264"
     } else {
-        Write-Host "Pulando: $output264 já existe."
+        Write-Host "Skip: $output264 already exists."
     }  
 
     # # H.265
@@ -74,7 +82,9 @@ $files_toConvert | ForEach-Object {
     # } else {
     #     Write-Host "Pulando: $outputAV1 já existe."
     # }  
-
-
     
 }
+
+Write-Host ""
+Write-Host "Done."
+Write-Host ""
